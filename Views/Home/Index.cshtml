@@ -1,0 +1,40 @@
+﻿@model ToyModel
+@using ToyStoreWebAppMVC.Data
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome!</h1>
+    </div>
+}
+else
+{
+    <partial name="_DefaultHomePageContentPartial" model="@Model.Toys" />
+}
+
+<div class="modal fade" id="UserLoginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_UserLoginPartial" model="new LoginModel
+        {
+         Username = string.Empty,
+         Password = string.Empty
+        }" />
+</div>
+<div class="modal fade" id="UserRegistrationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_UserRegistrationPartial" model="new RegistrationModel{
+        Username = string.Empty,Email = string.Empty,
+         Password = string.Empty
+}" />
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_AuthScriptsPartial");
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

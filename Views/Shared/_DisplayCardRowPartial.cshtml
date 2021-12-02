@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Toy>
+<div class="row mt-3">
+
+    @foreach (Toy toy in Model)
+    {
+        <div class="col-md-3">
+            <a href="#" class="text-dark">
+                <div class="card">
+                    <img class="img-thumbnail" src="@toy.ThumbnailImagePath" alt="@toy.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@toy.Name</h5>
+                        <p class="card-text">@toy.Description</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

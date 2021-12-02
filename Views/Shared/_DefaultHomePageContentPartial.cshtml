@@ -1,0 +1,24 @@
+﻿@model IEnumerable<Toy>
+
+<!-- Hero section-->
+<div class="hero section">
+    <img class="img-fluid" src="~/images/HOMEPAGE-BANNER.jpg" />
+</div>
+<hr class="section-divider"/>
+<!-- Toys section-->
+
+<div class="toys section">
+    <h3 class="section-header">Toys</h3>
+
+    @{
+        const int itemsPerRow = 4;
+        var count = Model.Count() / itemsPerRow;
+        var toyList = new List<Toy>();
+
+    }
+    @for (int i = 0; i <= count; i++)
+    {
+        toyList = Model.Skip(i * itemsPerRow).Take(itemsPerRow).ToList();
+        <partial name="DisplayCardRowPartial" model="toyList" />
+    }
+</div>

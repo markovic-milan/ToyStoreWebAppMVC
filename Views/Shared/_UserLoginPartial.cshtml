@@ -1,0 +1,38 @@
+﻿@model ToyStoreWebAppMVC.Models.LoginModel
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Log in</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="alert_placeholder_login">
+            </div>
+            <form id="UserLoginForm" asp-controller="UserAuth" asp-action="Login">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="LoginInValid">
+                <div class="form-group row">
+                    <label asp-for="Username" class="col-md-4 col-form-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="Username" placeholder="Username" class="form-control">
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Password" class="col-md-4 col-form-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="Password" placeholder="Password" class="form-control">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="login" name="login" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+</div>
