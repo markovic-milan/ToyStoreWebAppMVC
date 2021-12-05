@@ -10,7 +10,7 @@ namespace ToyStoreWebAppMVC.Entities
         public int Id { get; set; }
         public DateTime OrderTime { get; set; }
         [Column(TypeName = "decimal(6,2)")]
-        public decimal Cost { get; set; }
+        public decimal Total { get; set; }
         [ForeignKey("OrderId")]
         public virtual ICollection<OrderItem> OrderItem { get; set; }
     }

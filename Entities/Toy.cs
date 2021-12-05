@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ToyStoreWebAppMVC.Entities
 {
@@ -23,6 +24,9 @@ namespace ToyStoreWebAppMVC.Entities
         [Required]
         [StringLength(100)]
         public string Manufacturer { get; set; }
-        public OrderItem OrderItem { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(6,2)")]
+        [Range(0D,9999D)]
+        public decimal Cost { get; set; }
     }
 }

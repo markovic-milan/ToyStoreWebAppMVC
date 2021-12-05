@@ -31,6 +31,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Manufacturer)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -56,6 +59,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Manufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cost)
                 </td>
                 <td>
                     <partial name="_RUDButtonsPartial" model="@item.Id">

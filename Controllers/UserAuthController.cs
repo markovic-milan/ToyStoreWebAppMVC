@@ -39,8 +39,6 @@ namespace ToyStoreWebAppMVC.Controllers
                 {
                     ModelState.AddModelError("", "Invalid login attempt!");
                 }
-
-
             }
             return PartialView("_UserLoginPartial", loginModel);
         }
@@ -105,7 +103,7 @@ namespace ToyStoreWebAppMVC.Controllers
 
         private void AddErrorToModelState(IdentityResult result)
         {
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
