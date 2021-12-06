@@ -10,9 +10,13 @@
         <li class="nav-item">
             <a class="nav-link text-info mr-3" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="fas fa-user fa-circle-info mr-2 text-info"></i>@User.Identity.Name</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-info mr-3" title="Manage" data-toggle="modal" data-target="#UserPayoutModal"><i class="fas fa-shopping-cart mr-2 text-info"></i>Cart</a>
-        </li>
+        if (!await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-info mr-3" title="Manage" data-toggle="modal" data-target="#UserPayoutModal"><i class="fas fa-shopping-cart mr-2 text-info"></i>Cart</a>
+            </li>
+        }
+
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <button type="submit" class="btn btn-outline-info"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>

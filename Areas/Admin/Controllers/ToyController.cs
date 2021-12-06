@@ -90,7 +90,7 @@ namespace ToyStoreWebAppMVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer,Cost")] Toy toy)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer,Cost,Quantity")] Toy toy)
         {
             if (id != toy.Id)
             {

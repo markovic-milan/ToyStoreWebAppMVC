@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore
 @using Microsoft.AspNetCore.Identity
 @using ToyStoreWebAppMVC.Data
-
+@inject SignInManager<ApplicationUser> SignInManager
 <!-- Hero section-->
 <div class="hero section">
     <img class="img-fluid" src="~/images/HOMEPAGE-BANNER.jpg" />
@@ -32,7 +32,7 @@
                                                 Description: '@item.Description',
                                                 Cost: '@item.Cost',
                                                 ThumbnailImagePath: '/@item.ThumbnailImagePath'})"
-               class="nav-link text-dark" style="text-decoration:none;">
+               class="nav-link text-dark mojLink" style="text-decoration:none;">
                         <div class="card border-info">
                             <img class="card-img-top" src="~/@item.ThumbnailImagePath" alt="@item.Name" style="padding:1rem;">
                             <div class="card-body">
@@ -63,7 +63,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a class="btn btn-primary mr-2 route_id">Add To Cart</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                   <a class="btn btn-primary mr-2 route_id">Add To Cart</a> 
+                 }else{
+                    <a class="btn btn-primary mr-2" asp-area="Identity" asp-page="/Account/Register"  data-toggle="modal" data-target="#UserRegistrationModal">Register to Buy</a>
+                }
+                
             </div>
         </div>
     </div>

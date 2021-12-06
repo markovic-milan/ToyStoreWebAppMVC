@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ToyStoreWebAppMVC.Entities.UserOrder>
+﻿@model ToyStoreWebAppMVC.Models.TransactionModel
 
 @{
     ViewData["Title"] = "Index";
@@ -6,39 +6,53 @@
 
 <h1>Korisnicke transakcije</h1>
 
-<table class="table">
+<table class="table table-hover table-bordered">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                Username
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
+                FirstName
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                LastName
+            </th>
+            <th>
+                TransactionDate
+            </th>
+            <th>
+                Total
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.UserTransactions)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                    @Html.DisplayFor(modelItem => item.Username)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.OrderId)
+                    @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.UserId)
+                    @Html.DisplayFor(modelItem => item.LastName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @Html.DisplayFor(modelItem => item.TransactionDate)
+                </td>
+                <td class="table-success">
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td style="text-align: center;">
+                    <a asp-area="Admin" asp-controller="UserOrder" asp-action="Details" asp-route-id="@item.OrderId" class="text-dark mr-2"><i class="fas fa-table"></i></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<hr class="section-divider" />
+<div>
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-info">Back To Home</a>
+</div>

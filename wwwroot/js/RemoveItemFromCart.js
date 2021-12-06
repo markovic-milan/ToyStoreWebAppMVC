@@ -2,7 +2,6 @@
     var removeButtonClick = $(".my_link").click(removeItem);
     function removeItem() {
         var toyID = $(this).val();
-        alert(toyID);
         var url = "Home/Remove?id=" + toyID;
         $.ajax({
             type: "GET",
@@ -21,7 +20,7 @@
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 var errorText = "Status: " + xhr.status + " - " + xhr.statusText;
-                // PresentCloseableBootstrapAlert(".my_link", "danger", "Error!", errorText);
+                PresentCloseableBootstrapAlert(".my_link", "danger", "Error!", errorText);
                 console.error(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });

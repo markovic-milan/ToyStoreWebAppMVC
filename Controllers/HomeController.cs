@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,42 +18,86 @@ namespace ToyStoreWebAppMVC.Controllers
     {
         public readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private static List<Toy> cart = new List<Toy>();
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
         {
+            _signInManager = signInManager;
+            _userManager = userManager;
             _context = context;
             _logger = logger;
         }
 
         public async Task<IActionResult> AddToCart(int id)
         {
-            var toy = await _context.Toy
-                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (toy == null)
+            if (_signInManager.IsSignedIn(User))
             {
-                //Error
+                var toy = await _context.Toy
+                                .FirstOrDefaultAsync(m => m.Id == id);
+                if (toy == null)
+                {
+                    //Error
+                }
+                else
+                {
+                    cart.Add(toy);
+                }
+                return RedirectToAction("Index", "Home");
             }
             else
             {
-                cart.Add(toy);
+                return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> Remove(int id)
+        public IActionResult Remove(int id)
         {
             cart.RemoveAll(i => i.Id == id);
 
             return PartialView("_PayoutPartial", new ShopModel { Cart = cart });
         }
-        public async Task<IActionResult> Payout()
+        public async Task<IActionResult> Payout(ShopModel shopModel)
         {
-            decimal cijena = 0m;
-            foreach (Toy t in cart)
-            {
-                cijena += t.Cost;
+            UserOrder userOrder = new UserOrder();
+            List<OrderItem> orderItems = new List<OrderItem>();
+            //  upit na bazu za provjeru svih igracki pa za svaku dostupnu napraviti stavku
+            //  i za sve stavke narudzbu na kraju!
 
+            Order order = new Order()
+            {
+                OrderTime = DateTime.Now,
+                Total = 0m,
+                OrderItem = new List<OrderItem>()
+            };
+
+            var total = 0m;
+            foreach (Toy toy in cart)
+            {
+                var igracka = await (from t in _context.Toy
+                                     where t.Id == toy.Id
+                                     select t).FirstOrDefaultAsync();
+                if (igracka.Quantity > 0)
+                {
+                    total += igracka.Cost;
+                    order.OrderItem.Add(new OrderItem()
+                    {
+                        Toy = igracka,
+                        Quantity = 1
+                    });
+
+                }
             }
+            order.Total = total;
+
+            _context.Order.Add(order);
+            await _context.SaveChangesAsync();
+            var userId = _userManager.GetUserAsync(User).Result?.Id;
+            userOrder.OrderId = order.Id;
+            userOrder.UserId = userId;
+            _context.UserOrder.Add(userOrder);
+            await _context.SaveChangesAsync();
+            cart.Clear();
             return RedirectToAction("Index", "Home");
         }
         public async Task<IActionResult> Index(ShopModel shopModel)

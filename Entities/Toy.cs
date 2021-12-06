@@ -26,7 +26,10 @@ namespace ToyStoreWebAppMVC.Entities
         public string Manufacturer { get; set; }
         [Required]
         [Column(TypeName = "decimal(6,2)")]
-        [Range(0D,9999D)]
+        [Range(0D, 9999D)]
         public decimal Cost { get; set; }
+        [Required]
+        [Range(0, 10000)]
+        public int Quantity { get; set; }
     }
 }
