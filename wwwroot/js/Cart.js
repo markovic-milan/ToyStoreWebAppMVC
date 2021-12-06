@@ -14,10 +14,9 @@
 
         var alertHtml = '<div class="alert alert-info alert-dismissible fade show col-md-12" role="alert">' +
             'Removed</div>';
-        $("#alert_placeholder_delete").html(alertHtml);
-        $("#" + toyID).remove();
+        $("#" + toyID).html(alertHtml);
         $("#total").html(total);
-        $(".alert").first().delay(2000).slideUp(200, function () {
+        $(".alert").first().delay(1000).slideUp(200, function () {
             $(this).remove();
         });
     });

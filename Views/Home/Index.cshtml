@@ -10,7 +10,7 @@
 
 @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin"))
 {
-    <partial name="_DefaultHomePageAdminContentPartial" model="@Model" />
+    <partial name="_DefaultHomePageAdminContentPartial" model="@Model.Toys" />
 }
 else
 {
