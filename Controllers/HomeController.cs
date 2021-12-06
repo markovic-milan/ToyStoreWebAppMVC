@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace ToyStoreWebAppMVC.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private static List<Toy> cart = new List<Toy>();
+
         public HomeController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
@@ -29,40 +30,12 @@ namespace ToyStoreWebAppMVC.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> AddToCart(int id)
-        {
-            if (_signInManager.IsSignedIn(User))
-            {
-                var toy = await _context.Toy
-                                .FirstOrDefaultAsync(m => m.Id == id);
-                if (toy == null)
-                {
-                    //Error
-                }
-                else
-                {
-                    cart.Add(toy);
-                }
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        public IActionResult Remove(int id)
-        {
-            cart.RemoveAll(i => i.Id == id);
-
-            return PartialView("_PayoutPartial", new ShopModel { Cart = cart });
-        }
+        [HttpPost]
         public async Task<IActionResult> Payout(ShopModel shopModel)
         {
+            shopModel.TransactionInValid = "true";
             UserOrder userOrder = new UserOrder();
             List<OrderItem> orderItems = new List<OrderItem>();
-            //  upit na bazu za provjeru svih igracki pa za svaku dostupnu napraviti stavku
-            //  i za sve stavke narudzbu na kraju!
 
             Order order = new Order()
             {
@@ -72,7 +45,7 @@ namespace ToyStoreWebAppMVC.Controllers
             };
 
             var total = 0m;
-            foreach (Toy toy in cart)
+            foreach (Toy toy in shopModel.Cart)
             {
                 var igracka = await (from t in _context.Toy
                                      where t.Id == toy.Id
@@ -85,7 +58,6 @@ namespace ToyStoreWebAppMVC.Controllers
                         Toy = igracka,
                         Quantity = 1
                     });
-
                 }
             }
             order.Total = total;
@@ -97,7 +69,7 @@ namespace ToyStoreWebAppMVC.Controllers
             userOrder.UserId = userId;
             _context.UserOrder.Add(userOrder);
             await _context.SaveChangesAsync();
-            cart.Clear();
+            shopModel.TransactionInValid = "";
             return RedirectToAction("Index", "Home");
         }
         public async Task<IActionResult> Index(ShopModel shopModel)
@@ -105,7 +77,6 @@ namespace ToyStoreWebAppMVC.Controllers
             var toys = await GetToys();
 
             shopModel.Toys = toys;
-            shopModel.Cart = cart;
 
             return View(shopModel);
         }

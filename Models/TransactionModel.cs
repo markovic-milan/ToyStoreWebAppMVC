@@ -7,7 +7,6 @@ namespace ToyStoreWebAppMVC.Models
     public class TransactionModel
     {
         public IEnumerable<UserTransaction> UserTransactions { get; set; }
-
     }
 
     public class UserTransaction
