@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Toy>
+﻿@model ShopModel
 @using Microsoft.AspNetCore
 @using Microsoft.AspNetCore.Identity
 @using ToyStoreWebAppMVC.Data
@@ -15,13 +15,13 @@
 
     @{
         const int itemsPerRow = 4;
-        var count = Model.Count() / itemsPerRow;
+        var count = Model.Toys.Count() / itemsPerRow;
         var toyList = new List<Toy>();
     }
 
     @for (int i = 0; i <= count; i++)
     {
-        toyList = Model.Skip(i * itemsPerRow).Take(itemsPerRow).ToList();
+        toyList = Model.Toys.Skip(i * itemsPerRow).Take(itemsPerRow).ToList();
 
         <div class="row mt-3">
             @foreach (Toy item in toyList)
@@ -65,11 +65,13 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 @if (SignInManager.IsSignedIn(User))
                 {
-                   <a class="btn btn-primary mr-2 route_id">Add To Cart</a> 
-                 }else{
-                    <a class="btn btn-primary mr-2" asp-area="Identity" asp-page="/Account/Register"  data-toggle="modal" data-target="#UserRegistrationModal">Register to Buy</a>
+                    <a class="btn btn-primary mr-2 route_id">Add To Cart</a>
                 }
-                
+                else
+                {
+                    <a class="btn btn-primary mr-2" asp-area="Identity" asp-page="/Account/Register" data-toggle="modal" data-target="#UserRegistrationModal">Register to Buy</a>
+                }
+
             </div>
         </div>
     </div>
@@ -77,7 +79,13 @@
 <script>
     function OpenModalPopUp(obj){
         $(".modal-title").html(obj.Name);
-        $(".route_id").attr("href","/Home/AddToCart/" + obj.Id);
+        $(".route_id").off();
+        $(".route_id").click(function(){
+            var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+            cart.push(obj);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            location.href="Home";
+        });
         $(".dvData").html("<dl class='col'><dt class='col-sm-2'>" +
             "Description: </dt><dd class='col-sm-10'>" + obj.Description + "</dd>" +
             "<dt class='col-sm-2'>Cost:</dt><dd class='col-sm-10 text-success'><strong>" + obj.Cost + " KM</strong></dd>" +

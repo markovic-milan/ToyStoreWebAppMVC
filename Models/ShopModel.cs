@@ -7,6 +7,8 @@ namespace ToyStoreWebAppMVC.Models
     {
         public IEnumerable<Toy> Toys { get; set; }
 
-        public IEnumerable<Toy> Cart { get; set; }
+        public List<Toy> Cart { get; set; }
+
+        public string TransactionInValid { get; set; }
     }
 }

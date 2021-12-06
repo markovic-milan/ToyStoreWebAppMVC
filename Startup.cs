@@ -36,6 +36,14 @@ namespace ToyStoreWebAppMVC
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = ".ToyCart.Session";
+                options.IdleTimeout = TimeSpan.FromSeconds(3600);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +67,7 @@ namespace ToyStoreWebAppMVC
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
