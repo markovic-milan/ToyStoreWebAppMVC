@@ -1,10 +1,13 @@
 ﻿@model IEnumerable<Toy>
-
+@using Microsoft.AspNetCore
+@using Microsoft.AspNetCore.Identity
+@using ToyStoreWebAppMVC.Data
+@inject SignInManager<ApplicationUser> SignInManager
 <!-- Hero section-->
 <div class="hero section">
     <img class="img-fluid" src="~/images/HOMEPAGE-BANNER.jpg" />
 </div>
-<hr class="section-divider"/>
+<hr class="section-divider" />
 <!-- Toys section-->
 
 <div class="toys section">
@@ -14,11 +17,71 @@
         const int itemsPerRow = 4;
         var count = Model.Count() / itemsPerRow;
         var toyList = new List<Toy>();
-
     }
+
     @for (int i = 0; i <= count; i++)
     {
         toyList = Model.Skip(i * itemsPerRow).Take(itemsPerRow).ToList();
-        <partial name="DisplayCardRowPartial" model="toyList" />
+
+        <div class="row mt-3">
+            @foreach (Toy item in toyList)
+            {
+                <div class="col-md-3 mt-3">
+                    <a onclick="OpenModalPopUp({Id: '@item.Id',
+                                                Name: '@item.Name',
+                                                Description: '@item.Description',
+                                                Cost: '@item.Cost',
+                                                ThumbnailImagePath: '/@item.ThumbnailImagePath'})"
+               class="nav-link text-dark mojLink" style="text-decoration:none;">
+                        <div class="card border-info">
+                            <img class="card-img-top" src="~/@item.ThumbnailImagePath" alt="@item.Name" style="padding:1rem;">
+                            <div class="card-body">
+                                <hr />
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">@item.Description</p>
+                                <p class="card-price">@item.Cost <b>KM</b></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
     }
 </div>
+
+<div class="modal fade" id="ItemDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="dvData"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                   <a class="btn btn-primary mr-2 route_id">Add To Cart</a> 
+                 }else{
+                    <a class="btn btn-primary mr-2" asp-area="Identity" asp-page="/Account/Register"  data-toggle="modal" data-target="#UserRegistrationModal">Register to Buy</a>
+                }
+                
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function OpenModalPopUp(obj){
+        $(".modal-title").html(obj.Name);
+        $(".route_id").attr("href","/Home/AddToCart/" + obj.Id);
+        $(".dvData").html("<dl class='col'><dt class='col-sm-2'>" +
+            "Description: </dt><dd class='col-sm-10'>" + obj.Description + "</dd>" +
+            "<dt class='col-sm-2'>Cost:</dt><dd class='col-sm-10 text-success'><strong>" + obj.Cost + " KM</strong></dd>" +
+            "<img src='" + obj.ThumbnailImagePath + "' />" + "</dl>");
+        $("#ItemDetailsModal").modal();
+    }
+</script>

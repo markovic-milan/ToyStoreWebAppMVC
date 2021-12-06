@@ -9,7 +9,6 @@
             url: url,
             success: function (data) {
                 if (data == true) {
-
                     PresentCloseableBootstrapAlert("#alert_placeholder_register", "warning", "Invalid username!", "This username is already taken.");
                 } else {
                     CloseAlert("#alert_placeholder_register");

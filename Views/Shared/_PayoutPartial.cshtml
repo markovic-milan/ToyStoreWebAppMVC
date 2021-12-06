@@ -1,0 +1,68 @@
+﻿@model ToyStoreWebAppMVC.Models.ShopModel
+
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Your Cart</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" id="Item_remove">
+            <div id="alert_placeholder_delete">
+            </div>
+            <div id="div_data">
+                @{
+                    if (Model.Cart.Count() > 0)
+                    {
+                        var total = 0m;
+                        foreach (Toy toy in Model.Cart)
+                        {
+                            total += toy.Cost;
+                            <span class="row removable_row" id=@toy.Id>
+                                <div class="col-md-2 d-flex align-items-center">
+                                    <button type="button" class="btn btn-danger my_link" name="my_link" value="@toy.Id"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    @toy.Name
+                                </div>
+                                <div class="col-md-4 d-flex align-items-center">
+                                    @toy.Cost
+                                </div>
+                                <hr class="col-md-10 row-divider" />
+                            </span>
+                        }
+                        <div class="row">
+                            <div class="col-md-8 pl-2">
+                                <p class="pl-4"><strong>Total</strong></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p id="total"><strong>@total KM</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="">Credit Card Number</span>
+                            </div>
+                            <input type="text" class="form-control">
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col">
+                            <p>Oops Cart is empty!</p>
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismis</button>
+            <a id="buy" name="buy" class="btn btn-primary" asp-action="Payout" asp-controller="Home">Pay</a>
+        </div>
+    </div>
+</div>

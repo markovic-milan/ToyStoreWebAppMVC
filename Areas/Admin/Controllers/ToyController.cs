@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -89,13 +90,12 @@ namespace ToyStoreWebAppMVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer")] Toy toy)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer,Cost,Quantity")] Toy toy)
         {
             if (id != toy.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try

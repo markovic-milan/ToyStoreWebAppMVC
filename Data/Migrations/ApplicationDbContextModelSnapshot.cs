@@ -242,11 +242,11 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(6,2)");
-
                     b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(6,2)");
 
                     b.HasKey("Id");
 
@@ -260,18 +260,20 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Count")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ItemCost")
-                        .HasColumnType("decimal(6,2)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("ToyId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("ToyId");
 
                     b.ToTable("OrderItem");
                 });
@@ -293,6 +295,9 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(6,2)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -308,7 +313,7 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("OrderItemId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("ThumbnailImagePath")
@@ -317,8 +322,6 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderItemId");
 
                     b.ToTable("Toy");
                 });
@@ -401,15 +404,12 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("ToyStoreWebAppMVC.Entities.Toy", b =>
-                {
-                    b.HasOne("ToyStoreWebAppMVC.Entities.OrderItem", "OrderItem")
+                    b.HasOne("ToyStoreWebAppMVC.Entities.Toy", "Toy")
                         .WithMany()
-                        .HasForeignKey("OrderItemId");
+                        .HasForeignKey("ToyId");
 
-                    b.Navigation("OrderItem");
+                    b.Navigation("Toy");
                 });
 
             modelBuilder.Entity("ToyStoreWebAppMVC.Entities.UserOrder", b =>
