@@ -31,9 +31,20 @@ namespace ToyStoreWebAppMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Payout(ShopModel shopModel)
         {
-            shopModel.TransactionInValid = "true";
+
+            if (shopModel == null)
+            {
+                shopModel.TransactionInValid = "true";
+            }
+            else if (shopModel.Cart == null || shopModel.Cart.Count() == 0)
+            {
+                ModelState.AddModelError("", "Add toy to cart first!");
+            }
+
             UserOrder userOrder = new UserOrder();
             List<OrderItem> orderItems = new List<OrderItem>();
 
@@ -47,9 +58,8 @@ namespace ToyStoreWebAppMVC.Controllers
             var total = 0m;
             foreach (Toy toy in shopModel.Cart)
             {
-                var igracka = await (from t in _context.Toy
-                                     where t.Id == toy.Id
-                                     select t).FirstOrDefaultAsync();
+                var igracka = await GetToyById(toy.Id);
+
                 if (igracka.Quantity > 0)
                 {
                     total += igracka.Cost;
@@ -68,9 +78,13 @@ namespace ToyStoreWebAppMVC.Controllers
             userOrder.OrderId = order.Id;
             userOrder.UserId = userId;
             _context.UserOrder.Add(userOrder);
-            await _context.SaveChangesAsync();
-            shopModel.TransactionInValid = "";
+            var res = await _context.SaveChangesAsync();
+            if(res > 0)
+            {
+                shopModel.TransactionInValid = "";
+            }
             return RedirectToAction("Index", "Home");
+
         }
         public async Task<IActionResult> Index(ShopModel shopModel)
         {
@@ -79,6 +93,13 @@ namespace ToyStoreWebAppMVC.Controllers
             shopModel.Toys = toys;
 
             return View(shopModel);
+        }
+        private async Task<Toy> GetToyById(int id)
+        {
+            var toy = await (from t in _context.Toy
+                             where t.Id == id
+                             select t).FirstOrDefaultAsync();
+            return toy;
         }
 
         private async Task<List<Toy>> GetToys()
