@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ToyStoreWebAppMVC.Data;
 using ToyStoreWebAppMVC.Entities;
@@ -18,74 +20,92 @@ namespace ToyStoreWebAppMVC.Controllers
     public class HomeController : Controller
     {
         public readonly ApplicationDbContext _context;
-        private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public HomeController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
-            _logger = logger;
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> Payout(ShopModel shopModel)
         {
-
+            shopModel.NotInStock = "[]";
             if (shopModel == null)
             {
-                shopModel.TransactionInValid = "true";
+                return BadRequest();
             }
             else if (shopModel.Cart == null || shopModel.Cart.Count() == 0)
             {
                 ModelState.AddModelError("", "Add toy to cart first!");
+                return RedirectToAction("Index", shopModel);
             }
-
-            UserOrder userOrder = new UserOrder();
-            List<OrderItem> orderItems = new List<OrderItem>();
-
-            Order order = new Order()
+            else
             {
-                OrderTime = DateTime.Now,
-                Total = 0m,
-                OrderItem = new List<OrderItem>()
-            };
+                List<Toy> notInStock = new List<Toy>();
+                UserOrder userOrder = new UserOrder();
 
-            var total = 0m;
-            foreach (Toy toy in shopModel.Cart)
-            {
-                var igracka = await GetToyById(toy.Id);
-
-                if (igracka.Quantity > 0)
+                Order order = new Order()
                 {
-                    total += igracka.Cost;
-                    order.OrderItem.Add(new OrderItem()
+                    OrderTime = DateTime.Now,
+                    Total = 0m,
+                    OrderItem = new List<OrderItem>()
+                };
+
+                var total = 0m;
+                foreach (Toy toy in shopModel.Cart)
+                {
+                    var result = await BuyToy(toy.Id);
+                    if (result > 0)
                     {
-                        Toy = igracka,
-                        Quantity = 1
-                    });
+                        var igracka = await GetToyById(toy.Id);
+                        total += igracka.Cost;
+                        order.OrderItem.Add(new OrderItem()
+                        {
+                            ToyName = igracka.Name,
+                            ToyColor = igracka.Color,
+                            ToyCost = igracka.Cost,
+                            ToyManufacturer = igracka.Manufacturer,
+                            Quantity = 1
+                        });
+                    }
+                    else
+                    {
+                        //Nema na stanju!
+                        notInStock.Add(toy);
+                    }
+
+                }
+                if (notInStock.Count > 0)
+                {
+                    shopModel.NotInStock = JsonConvert.SerializeObject(notInStock, Formatting.Indented);
+                }
+                if (notInStock.Count == shopModel.Cart.Count())
+                {
+                    return RedirectToAction("Index", shopModel);
+                }
+                else
+                {
+                    order.Total = total;
+                    _context.Order.Add(order);
+                    await _context.SaveChangesAsync();
+                    var userId = _userManager.GetUserAsync(User).Result?.Id;
+                    userOrder.OrderId = order.Id;
+                    userOrder.UserId = userId;
+                    _context.UserOrder.Add(userOrder);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", shopModel);
                 }
             }
-            order.Total = total;
-
-            _context.Order.Add(order);
-            await _context.SaveChangesAsync();
-            var userId = _userManager.GetUserAsync(User).Result?.Id;
-            userOrder.OrderId = order.Id;
-            userOrder.UserId = userId;
-            _context.UserOrder.Add(userOrder);
-            var res = await _context.SaveChangesAsync();
-            if(res > 0)
-            {
-                shopModel.TransactionInValid = "";
-            }
-            return RedirectToAction("Index", "Home");
-
         }
+
+        private async Task<int> BuyToy(int id)
+        {
+            return await _context.Database.ExecuteSqlRawAsync("UPDATE Toy SET Quantity = Quantity - 1 WHERE " +
+                            "Id = " + id + " AND Quantity > 0");
+        }
+
         public async Task<IActionResult> Index(ShopModel shopModel)
         {
             var toys = await GetToys();

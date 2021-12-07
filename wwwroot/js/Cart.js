@@ -1,6 +1,8 @@
 ﻿$(function () {
     var cartButton = $("#cart").click(onCartButtonClick);
+
     $(document).on('click', '.my_link', function () {
+
         var toyID = $(this).val();
         var cost = $("#total").html();
         var cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -22,6 +24,8 @@
     });
 
     function onCartButtonClick() {
+        $("#buy").show();
+        $("#dismis").html("Dismis");
         var dataHtml = "";
         var total = 0.0;
         var cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -32,8 +36,9 @@
                     "<div class='col-md-2 d-flex align-items-center'>" +
                     "<button type='button' class='btn btn-danger my_link' name='my_link' value='" + item.Id +
                     "'><i class='fas fa-times'></i></button></div>" +
-                    "<div class='col-md-6 d-flex align-items-center'>" + item.Name + "</div>" +
-                    "<div class='col-md-4 d-flex align-items-center'>" + item.Cost + "</div>" +
+                    "<div class='col-md-3 d-flex align-items-center'>" + item.Name + "</div>" +
+                    "<div class='col-md-4 d-flex align-items-center stock_placeholder_alert'></div>" +
+                    "<div class='col-md-3 d-flex align-items-center'>" + item.Cost + "</div>" +
                     "<hr class='col-md-10 row-divider'/></span>"
             });
 

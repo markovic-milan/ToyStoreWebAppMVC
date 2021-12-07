@@ -13,7 +13,7 @@
         if (!await UserManager.IsInRoleAsync(UserManager.GetUserAsync(User).Result, "admin"))
         {
             <li class="nav-item">
-                <a id="cart" class="nav-link text-info mr-3"><i class="fas fa-shopping-cart mr-2 text-info"></i>Cart</a>
+                <a id="cart" class="nav-link text-info mr-3" style="cursor: pointer;"><i class="fas fa-shopping-cart mr-2 text-info"></i>Cart</a>
             </li>
         }
 

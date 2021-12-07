@@ -9,6 +9,6 @@ namespace ToyStoreWebAppMVC.Models
 
         public List<Toy> Cart { get; set; }
 
-        public string TransactionInValid { get; set; }
+        public string NotInStock { get; set; }
     }
 }

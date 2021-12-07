@@ -58,7 +58,7 @@ namespace ToyStoreWebAppMVC.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer")] Toy toy)
+        public async Task<IActionResult> Create([Bind("Id,Color,Category,Name,Description,ThumbnailImagePath,Manufacturer,Cost,Quantity")] Toy toy)
         {
             if (ModelState.IsValid)
             {

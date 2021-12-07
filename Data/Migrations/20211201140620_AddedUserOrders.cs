@@ -59,7 +59,7 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,7 +84,7 @@ namespace ToyStoreWebAppMVC.Data.Migrations
                         column: x => x.OrderItemId,
                         principalTable: "OrderItems",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

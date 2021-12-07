@@ -44,15 +44,15 @@ namespace ToyStoreWebAppMVC.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            var orderList = await (from orderItem in _context.OrderItem where orderItem.OrderId == id
-                                   join toy in _context.Toy on orderItem.Toy.Id equals toy.Id
+            var orderList = await (from orderItem in _context.OrderItem
+                                   where orderItem.OrderId == id
                                    select new Toy
                                    {
-                                       Name = toy.Name,
-                                       Color = toy.Color,
-                                       Cost = toy.Cost,
-                                       Quantity = toy.Quantity,
-                                       Manufacturer = toy.Manufacturer
+                                       Name = orderItem.ToyName,
+                                       Color = orderItem.ToyColor,
+                                       Cost = orderItem.ToyCost,
+                                       Quantity = orderItem.Quantity,
+                                       Manufacturer = orderItem.ToyManufacturer
                                    }).ToListAsync();
             return View(orderList);
         }
