@@ -3,8 +3,11 @@
 
     function onPayButtonClick() {
         var url = "/Home/Payout";
+        var antiForgeryToken = $("#UserLoginModal input[name='__RequestVerificationToken']").val();
         var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        console.error(cart);
         var shopModel = {
+            __RequestVerificationToken: antiForgeryToken,
             Cart: cart
         }
         $.ajax({
@@ -12,8 +15,6 @@
             url: url,
             data: shopModel,
             success: function (data) {
-                console.error(data);
-
                 localStorage.clear();
                 location.href = "Home/Index";
             }, error: function (xhr, ajaxOptions, thrownError) {
